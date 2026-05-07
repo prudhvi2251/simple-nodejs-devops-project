@@ -4,14 +4,15 @@ pipeline {
 
     environment {
         IMAGE_NAME = "gold2251/devops-app"
+        CONTAINER_NAME = "devops-container"
     }
 
     stages {
 
         stage('Clone Code') {
             steps {
-            
-                git branch: 'main', url: 'https://github.com/prudhvi2251/simple-nodejs-devops-project.git'
+                git branch: 'main',
+                url: 'https://github.com/prudhvi2251/simple-nodejs-devops-project.git'
             }
         }
 
@@ -35,6 +36,30 @@ pipeline {
                     sh 'docker push $IMAGE_NAME:latest'
                 }
             }
+        }
+
+        stage('Deploy Container') {
+            steps {
+
+                sh 'docker stop $CONTAINER_NAME || true'
+
+                sh 'docker rm $CONTAINER_NAME || true'
+
+                sh 'docker pull $IMAGE_NAME:latest'
+
+                sh 'docker run -d --name $CONTAINER_NAME -p 3000:3000 $IMAGE_NAME:latest'
+            }
+        }
+    }
+
+    post {
+
+        success {
+            echo 'CI/CD Pipeline Executed Successfully!'
+        }
+
+        failure {
+            echo 'Pipeline Failed!'
         }
     }
 }
