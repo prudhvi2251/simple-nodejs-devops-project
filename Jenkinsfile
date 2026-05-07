@@ -10,8 +10,8 @@ pipeline {
 
         stage('Clone Code') {
             steps {
-                git branch: 'main',
-                git 'https://github.com/prudhvi2251/simple-nodejs-devops-project.git'
+            
+                git branch: 'main', url: 'https://github.com/prudhvi2251/simple-nodejs-devops-project.git'
             }
         }
 
