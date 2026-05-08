@@ -35,6 +35,7 @@ pipeline {
         stage('Deploy to EKS') {
             steps {
                 sh '''
+                aws eks update-kubeconfig --region ap-south-1 --name devops-cluster
                 kubectl apply -f deployment.yaml
                 kubectl apply -f service.yaml
                 '''
