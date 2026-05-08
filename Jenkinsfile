@@ -1,5 +1,4 @@
 pipeline {
-
     agent any
 
     environment {
@@ -10,7 +9,6 @@ pipeline {
 
         stage('Clone Code') {
             steps {
-            
                 git branch: 'main', url: 'https://github.com/prudhvi2251/simple-nodejs-devops-project.git'
             }
         }
@@ -23,17 +21,23 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub',
                     usernameVariable: 'DOCKER_USER',
                     passwordVariable: 'DOCKER_PASS'
                 )]) {
-
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
-
                     sh 'docker push $IMAGE_NAME:latest'
                 }
+            }
+        }
+
+        stage('Deploy to EKS') {
+            steps {
+                sh '''
+                kubectl apply -f deployment.yaml
+                kubectl apply -f service.yaml
+                '''
             }
         }
     }
